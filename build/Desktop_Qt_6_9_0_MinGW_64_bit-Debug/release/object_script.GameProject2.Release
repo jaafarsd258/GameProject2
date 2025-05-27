@@ -1,0 +1,17 @@
+release/agent.o
+release/gallery.o
+release/gameboard.o
+release/gridselection.o
+release/loadpage.o
+release/main.o
+release/mainpage.o
+release/opening.o
+release/playersname.o
+release/qrc_images.o
+release/moc_gallery.o
+release/moc_gameboard.o
+release/moc_gridselection.o
+release/moc_loadpage.o
+release/moc_mainpage.o
+release/moc_opening.o
+release/moc_playersname.o

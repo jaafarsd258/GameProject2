@@ -1,0 +1,17 @@
+debug/agent.o
+debug/gallery.o
+debug/gameboard.o
+debug/gridselection.o
+debug/loadpage.o
+debug/main.o
+debug/mainpage.o
+debug/opening.o
+debug/playersname.o
+debug/qrc_images.o
+debug/moc_gallery.o
+debug/moc_gameboard.o
+debug/moc_gridselection.o
+debug/moc_loadpage.o
+debug/moc_mainpage.o
+debug/moc_opening.o
+debug/moc_playersname.o
