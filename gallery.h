@@ -4,6 +4,19 @@
 #include <QMainWindow>
 #include <QLabel>
 #include <QPushButton>
+#include <QScrollArea>
+#include <QGridLayout>
+#include <QVector>
+
+struct AgentInfo {
+    QString name;
+    QString imagePath;
+    QString type;
+    int hp;
+    int mobility;
+    int damage;
+    int attackRange;
+};
 
 class opening;  // Forward declaration
 
@@ -14,8 +27,13 @@ public:
     explicit gallery(opening* openingPage = nullptr, QWidget *parent = nullptr);
 
 private:
+    void setupAgentsData();
+    void createAgentCards();
+
     QLabel *backgroundLabel;
     opening* m_openingPage;
+    QVector<AgentInfo> m_agents;
+    QScrollArea *m_scrollArea;
 };
 
 #endif // GALLERY_H
