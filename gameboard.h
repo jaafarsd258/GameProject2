@@ -1,6 +1,8 @@
 #ifndef GAMEBOARD_H
 #define GAMEBOARD_H
 
+
+#include "gridselection.h"
 #include <QMainWindow>
 #include <QVector>
 #include <QMap>
@@ -85,6 +87,7 @@ private:
     // Draggable items
     QVector<DraggableItem> m_draggableItems;
     QMap<QString, QPixmap> m_itemPixmaps;
+    gridselection *m_gridselectionPage;
 
     // Player info displays
     QLabel *p1Label;
