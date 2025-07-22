@@ -1,4 +1,5 @@
 #include "gameboard.h"
+#include "gridselection.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QWidget>
@@ -48,14 +49,15 @@ void gameboard::initializeBoard()
     const int numColumns = 9;
     m_board.resize(numColumns);
 
+    // Initialize columns with alternating row counts (5 for even columns, 4 for odd)
     for (int col = 0; col < numColumns; ++col) {
-        int rows = (col % 2) ? 4 : 5;
+        int rows = (col % 2 == 0) ? 5 : 4;  // Even columns have 5 rows, odd have 4
         m_board[col].resize(rows);
 
         for (int row = 0; row < rows; ++row) {
             m_board[col][row].col = col;
             m_board[col][row].row = row;
-            m_board[col][row].type = "";
+            m_board[col][row].type = "";  // Initialize as empty
         }
     }
 }
@@ -110,6 +112,33 @@ void gameboard::setupUI()
     sidePanel->setStyleSheet("background-color: rgba(50, 50, 50, 200); border-radius: 10px;");
     mainLayout->addWidget(sidePanel, 3);
 
+    QPushButton *backButton = new QPushButton("Back", centralWidget);
+    backButton->setFixedSize(100, 40);
+    backButton->move(30, 30);
+    backButton->setStyleSheet(
+        "QPushButton {"
+        "   border: 2px solid #555;"
+        "   background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0,"
+        "       stop:0 rgba(100, 100, 100, 200), stop:1 rgba(150, 150, 150, 200));"
+        "   color: white;"
+        "   font: bold 10pt 'Arial Rounded MT';"
+        "   border-radius: 5px;"
+        "   padding: 5px;"
+        "}"
+        "QPushButton:hover {"
+        "   background-color: rgba(200, 200, 200, 200);"
+        "   border: 2px solid #FFD700;"
+        "   color: #333;"
+        "}"
+        );
+
+    connect(backButton, &QPushButton::clicked, this, [this]() {
+    this->hide();
+        if (m_gridselectionPage) {
+            m_gridselectionPage->show();
+        }
+    });
+
     backgroundLabel->lower();
 }
 
@@ -121,49 +150,68 @@ void gameboard::loadGridData()
         return;
     }
 
+    // Clear the board
+    for (auto& column : m_board) {
+        for (auto& cell : column) {
+            cell.type = "";
+        }
+    }
+
     QTextStream in(&file);
     int lineNum = 0;
-    bool isOddLine = true;
 
     while (!in.atEnd()) {
-        QString line = in.readLine().trimmed();
-        if (line.isEmpty()) continue;
-
-        int pos = 0;
+        QString line = in.readLine();
+        bool isOddLine = (lineNum % 2 == 1); // Line numbers start at 0
         int cellCount = 0;
-        int expectedCells = isOddLine ? 5 : 4;
+        int pos = 0;
 
-        while (pos < line.length() && cellCount < expectedCells) {
-            if ((isOddLine && line[pos] == '/') || (!isOddLine && line[pos] == '\\')) {
+        while (pos < line.length()) {
+            if (line[pos] == '/') {
                 pos++;
-                QString cell;
-                while (pos < line.length() &&
-                       ((isOddLine && line[pos] != '\\') ||
-                        (!isOddLine && line[pos] != '/'))) {
-                    cell += line[pos];
+                QString cellContent;
+
+                // Extract cell content
+                while (pos < line.length() && line[pos] != '\\') {
+                    if (line[pos] != ' ' && line[pos] != '_') {
+                        cellContent += line[pos];
+                    }
                     pos++;
                 }
-                pos++;
-                int col = lineNum / 2;
-                int row = cellCount;
-                if (col < m_board.size() && row < m_board[col].size()) {
-                    m_board[col][row].type = cell.trimmed();
-                    if (m_board[col][row].type.isEmpty()) {
-                        m_board[col][row].type = " ";
+
+                // Only process if we found valid content
+                if (!cellContent.isEmpty()) {
+                    int boardCol, boardRow;
+
+                    if (isOddLine) {
+                        boardCol = cellCount * 2;     // Even columns for odd lines
+                        boardRow = lineNum / 2;       // Integer division
+                    } else {
+                        boardCol = cellCount * 2 + 1; // Odd columns for even lines
+                        boardRow = (lineNum - 1) / 2; // Adjusted for 0-based index
+                    }
+
+                    // Validate position and set cell content
+                    if (boardCol >= 0 && boardCol < m_board.size() &&
+                        boardRow >= 0 && boardRow < m_board[boardCol].size() &&
+                        (cellContent == "1" || cellContent == "2" ||
+                         cellContent == "#" || cellContent == "~")) {
+                        m_board[boardCol][boardRow].type = cellContent;
                     }
                 }
+
                 cellCount++;
+                if (pos < line.length() && line[pos] == '\\') {
+                    pos++;
+                }
             } else {
                 pos++;
             }
         }
-
-        isOddLine = !isOddLine;
-        if (!isOddLine) lineNum++;
+        lineNum++;
     }
     file.close();
 }
-
 void gameboard::displayHexagonalGrid()
 {
     QWidget *gridWidget = qobject_cast<QVBoxLayout*>(centralWidget()->layout()->itemAt(0)->widget()->layout())->itemAt(4)->widget();
@@ -182,7 +230,7 @@ void gameboard::displayHexagonalGrid()
     hexGridWidget->setFixedSize(900, 700);
 
     QVBoxLayout *containerLayout = new QVBoxLayout(gridWidget);
-    containerLayout->setContentsMargins(-50, -30, 0, 0);
+    containerLayout->setContentsMargins(-50, 0, 0, 0);
     containerLayout->addWidget(hexGridWidget, 0, Qt::AlignLeft | Qt::AlignTop);  // Changed alignment
 
     hexGridWidget->installEventFilter(this);
@@ -237,8 +285,8 @@ void gameboard::drawHexagon(QPainter &painter, const QPoint &center, int size, c
 
 QPoint gameboard::hexagonCenter(int col, int row) const
 {
-    int x = 450 + (col - 4) * HEX_WIDTH * 0.75;
-    int y = 350;
+    int x = 300 + (col - 4) * HEX_WIDTH * 0.75;
+    int y = 200;
     if (col % 2 == 0) {
         y += (row - 2) * HEX_HEIGHT;
     } else {
@@ -338,7 +386,7 @@ void gameboard::createDraggableItems()
 
     for (const auto &item : m_draggableItems) {
         QWidget *itemWidget = new QWidget();
-        itemWidget->setFixedHeight(140);
+        itemWidget->setFixedHeight(150);
         itemWidget->setStyleSheet(
             "QWidget {"
             "   background-color: rgba(70, 70, 70, 180);"
@@ -455,14 +503,14 @@ QPoint gameboard::convertToGridCoordinates(const QPoint& screenPos)
     QWidget *gridWidget = qobject_cast<QVBoxLayout*>(centralWidget()->layout()->itemAt(0)->widget()->layout())->itemAt(4)->widget();
     QPoint relativePos = gridWidget->mapFromParent(screenPos);
 
-    double col = (relativePos.x() - 450) / (HEX_WIDTH * 0.75) + 4;
+    double col = (relativePos.x() - 300) / (HEX_WIDTH * 0.75) + 4;
     int roundedCol = qRound(col);
 
     double row;
     if (roundedCol % 2 == 0) {
-        row = (relativePos.y() - 350) / HEX_HEIGHT + 2;
+        row = (relativePos.y() - 200) / HEX_HEIGHT + 2;
     } else {
-        row = (relativePos.y() - 350) / HEX_HEIGHT + 1.5;
+        row = (relativePos.y() - 200) / HEX_HEIGHT + 1.5;
     }
     int roundedRow = qRound(row);
 
@@ -478,17 +526,41 @@ QPoint gameboard::convertToGridCoordinates(const QPoint& screenPos)
 
 void gameboard::addItemToGrid(const QString& itemName, const QPoint& gridPos)
 {
+    if (gridPos.x() < 0 || gridPos.x() >= m_board.size() ||
+        gridPos.y() < 0 || gridPos.y() >= m_board[gridPos.x()].size()) {
+        return; // Invalid position
+    }
+
+    const GameCell &cell = m_board[gridPos.x()][gridPos.y()];
+
+    // Check if cell is available (not wall or water)
+    if (cell.type == "#" || cell.type == "~") {
+        return; // Can't place on walls or water
+    }
+
+    // Check if cell is already occupied by a unit
+    if (cell.type == "1" || cell.type == "2") {
+        return; // Can't place on occupied cells
+    }
+
     auto it = std::find_if(m_draggableItems.begin(), m_draggableItems.end(),
                            [&itemName](const DraggableItem& item) { return item.name == itemName; });
 
-    if (it != m_draggableItems.end() &&
-        gridPos.x() >= 0 && gridPos.x() < m_board.size() &&
-        gridPos.y() >= 0 && gridPos.y() < m_board[gridPos.x()].size()) {
-
+    if (it != m_draggableItems.end()) {
+        // Set the cell type based on current player
         m_board[gridPos.x()][gridPos.y()].type = m_isPlayer1Turn ? "1" : "2";
 
+        // Update the game board display
         QWidget *gridWidget = qobject_cast<QVBoxLayout*>(centralWidget()->layout()->itemAt(0)->widget()->layout())->itemAt(4)->widget();
         gridWidget->update();
+
+        // Switch turns after placing a unit
+        m_isPlayer1Turn = !m_isPlayer1Turn;
+        m_currentTurn += m_isPlayer1Turn ? 1 : 0;
+
+        // Update UI labels
+        currentPlayerLabel->setText("Current: " + (m_isPlayer1Turn ? m_player1Name : m_player2Name));
+        turnLabel->setText("Turn: " + QString::number(m_currentTurn));
     }
 }
 
