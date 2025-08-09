@@ -3,6 +3,7 @@
         <file>background.jpg</file>
         <file>backmonsters.jpg</file>
         <file>backmonsters4.jpg</file>
+        <file>backmonsters5.jpg</file>
     </qresource>
     <qresource prefix="/grids">
         <file>grid1.txt</file>

@@ -1,0 +1,28 @@
+<RCC>
+    <qresource prefix="/image">
+        <file>angus.png</file>
+        <file>billy.png</file>
+        <file>bunka.png</file>
+        <file>colonel_baba.png</file>
+        <file>duraham.png</file>
+        <file>medusa.png</file>
+        <file>reketon.png</file>
+        <file>sanka.png</file>
+        <file>eloi.png</file>
+        <file>elsa.png</file>
+        <file>frost.png</file>
+        <file>kabu.png</file>
+        <file>kanar.png</file>
+        <file>karissa.png</file>
+        <file>khan.png</file>
+        <file>rajakal.png</file>
+        <file>salih.png</file>
+        <file>sir_lamorak.png</file>
+        <file>sir_philip.png</file>
+        <file>tusk.png</file>
+        <file>death.png</file>
+        <file>rambu.png</file>
+        <file>sabrina.png</file>
+        <file>boi.png</file>
+    </qresource>
+</RCC>
