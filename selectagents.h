@@ -29,11 +29,11 @@ class ClickableFrame : public QFrame {
 public:
     explicit ClickableFrame(QWidget* parent = nullptr) : QFrame(parent) {}
 signals:
-    void clicked();  // سیگنال کلیک
+    void clicked();  
 protected:
     void mousePressEvent(QMouseEvent* event) override {
         QFrame::mousePressEvent(event);
-        emit clicked();  // ارسال سیگنال هنگام کلیک
+        emit clicked();  
     }
 };
 
@@ -46,8 +46,8 @@ public:
                  QWidget* parent = nullptr);
     QString getPlayer1Name() const { return m_player1Name; }
     QString getPlayer2Name() const { return m_player2Name; }
-    QStringList getPlayer1Agents() const; // اضافه شود
-    QStringList getPlayer2Agents() const; // اضافه شود
+    QStringList getPlayer1Agents() const; 
+    QStringList getPlayer2Agents() const;
 signals:
     void gameReady();
 
@@ -69,7 +69,7 @@ private:
     bool m_player2Confirmed = false;
 
 
-    QMap<int, QSet<QString>> m_selectedAgents; // 1 for player1, 2 for player2
+    QMap<int, QSet<QString>> m_selectedAgents; 
     QMap<Agent::Type, QVector<QString>> m_agentsByType;
 
     QLabel* m_player1Label;
@@ -82,7 +82,7 @@ private:
     QPushButton* m_startButton;
     QLabel* backgroundLabel;
     QVector<AgentInfo> m_agents;
-    gameboard* m_gameBoard = nullptr; // Add this line
+    gameboard* m_gameBoard = nullptr; 
 
 public:
     ~SelectAgents() {
