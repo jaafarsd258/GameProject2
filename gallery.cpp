@@ -1,22 +1,22 @@
 #include "gallery.h"
-#include "opening.h"
-#include <QVBoxLayout>
-#include <QWidget>
-#include <QPixmap>
-#include <QScreen>
-#include <QGuiApplication>
 #include <QDebug>
 #include <QFrame>
+#include <QGuiApplication>
+#include <QPixmap>
+#include <QScreen>
 #include <QScrollArea>
+#include <QVBoxLayout>
+#include <QWidget>
+#include "opening.h"
 
-gallery::gallery(opening* openingPage, QWidget *parent)
-    : QMainWindow(parent), m_openingPage(openingPage)
+gallery::gallery(opening *openingPage, QWidget *parent)
+    : QMainWindow(parent)
+    , m_openingPage(openingPage)
 {
     setFixedSize(800, 600);
     if (QScreen *screen = QGuiApplication::primaryScreen()) {
         QRect screenGeometry = screen->geometry();
-        move((screenGeometry.width() - width()) / 2,
-             (screenGeometry.height() - height()) / 2);
+        move((screenGeometry.width() - width()) / 2, (screenGeometry.height() - height()) / 2);
     }
 
     QWidget *centralWidget = new QWidget(this);
@@ -24,7 +24,7 @@ gallery::gallery(opening* openingPage, QWidget *parent)
 
     backgroundLabel = new QLabel(centralWidget);
     QPixmap bgImage(":/new/backmonsters4.jpg");
-    if(bgImage.isNull()) {
+    if (bgImage.isNull()) {
         backgroundLabel->setStyleSheet("background-color: #222;");
     } else {
         bgImage = bgImage.scaled(this->size(), Qt::KeepAspectRatioByExpanding);
@@ -49,8 +49,7 @@ gallery::gallery(opening* openingPage, QWidget *parent)
         "   background-color: rgba(200, 200, 200, 200);"
         "   border: 2px solid #FFD700;"
         "   color: #333;"
-        "}"
-        );
+        "}");
 
     connect(backButton, &QPushButton::clicked, this, [this]() {
         this->hide();
@@ -58,15 +57,12 @@ gallery::gallery(opening* openingPage, QWidget *parent)
             m_openingPage->show();
         }
     });
-
-    // Setup scroll area for agents
     m_scrollArea = new QScrollArea(centralWidget);
     m_scrollArea->setGeometry(50, 100, 700, 450);
     m_scrollArea->setStyleSheet(
         "QScrollArea { border: none; background: transparent; }"
         "QScrollBar:vertical { width: 12px; background: rgba(50, 50, 50, 150); }"
-        "QScrollBar::handle:vertical { background: rgba(100, 100, 100, 200); min-height: 20px; }"
-        );
+        "QScrollBar::handle:vertical { background: rgba(100, 100, 100, 200); min-height: 20px; }");
 
     QWidget *scrollContent = new QWidget();
     scrollContent->setStyleSheet("background: transparent;");
@@ -94,49 +90,50 @@ gallery::gallery(opening* openingPage, QWidget *parent)
 void gallery::setupAgentsData()
 {
     // WaterWalking agents
-    m_agents.append({"Billy", ":/units/billy.png", "WaterWalking", 320, 3, 90, 1});
-    m_agents.append({"Reketon", ":/units/reketon.png", "WaterWalking", 320, 2, 80, 2});
-    m_agents.append({"Angus", ":/units/angus.png", "WaterWalking", 400, 2, 100, 1});
-    m_agents.append({"Duraham", ":/units/duraham.png", "WaterWalking", 320, 2, 100, 2});
-    m_agents.append({"Colonel Baba", ":/units/colonel_baba.png", "WaterWalking", 400, 2, 100, 1});
-    m_agents.append({"Medusa", ":/units/medusa.png", "WaterWalking", 320, 2, 90, 2});
-    m_agents.append({"Bunka", ":/units/bunka.png", "WaterWalking", 320, 3, 100, 1});
-    m_agents.append({"Sanka", ":/units/sanka.png", "WaterWalking", 320, 3, 100, 1});
+    m_agents.append({"Billy", ":/image/billy.png", "WaterWalking", 320, 3, 90, 1});
+    m_agents.append({"Reketon", ":/image/reketon.png", "WaterWalking", 320, 2, 80, 2});
+    m_agents.append({"Angus", ":/image/angus.png", "WaterWalking", 400, 2, 100, 1});
+    m_agents.append({"Duraham", ":/image/duraham.png", "WaterWalking", 320, 2, 100, 2});
+    m_agents.append({"Colonel Baba", ":/image/colonel_baba.png", "WaterWalking", 400, 2, 100, 1});
+    m_agents.append({"Medusa", ":/image/medusa.png", "WaterWalking", 320, 2, 90, 2});
+    m_agents.append({"Bunka", ":/image/bunka.png", "WaterWalking", 320, 3, 100, 1});
+    m_agents.append({"Sanka", ":/image/sanka.png", "WaterWalking", 320, 3, 100, 1});
 
     // Grounded agents
-    m_agents.append({"Sir Lamorak", ":/units/sir_lamorak.png", "Grounded", 320, 3, 110, 1});
-    m_agents.append({"Kabu", ":/units/kabu.png", "Grounded", 400, 2, 120, 1});
-    m_agents.append({"Rajakal", ":/units/rajakal.png", "Grounded", 320, 2, 130, 1});
-    m_agents.append({"Salih", ":/units/salih.png", "Grounded", 400, 2, 80, 1});
-    m_agents.append({"Khan", ":/units/khan.png", "Grounded", 320, 2, 90, 1});
-    m_agents.append({"Boi", ":/units/boi.png", "Grounded", 400, 2, 100, 1});
-    m_agents.append({"Eloi", ":/units/eloi.png", "Grounded", 240, 2, 100, 2});
-    m_agents.append({"Kanar", ":/units/kanar.png", "Grounded", 160, 2, 100, 2});
-    m_agents.append({"Elsa", ":/units/elsa.png", "Grounded", 320, 2, 140, 2});
-    m_agents.append({"Karissa", ":/units/karissa.png", "Grounded", 280, 2, 80, 2});
-    m_agents.append({"Sir Philip", ":/units/sir_philip.png", "Grounded", 400, 2, 100, 1});
-    m_agents.append({"Frost", ":/units/frost.png", "Grounded", 260, 2, 80, 2});
-    m_agents.append({"Tusk", ":/units/tusk.png", "Grounded", 400, 2, 100, 1});
+    m_agents.append({"Sir Lamorak", ":/image/sir_lamorak.png", "Grounded", 320, 3, 110, 1});
+    m_agents.append({"Kabu", ":/image/kabu.png", "Grounded", 400, 2, 120, 1});
+    m_agents.append({"Rajakal", ":/image/rajakal.png", "Grounded", 320, 2, 130, 1});
+    m_agents.append({"Salih", ":/image/salih.png", "Grounded", 400, 2, 80, 1});
+    m_agents.append({"Khan", ":/image/khan.png", "Grounded", 320, 2, 90, 1});
+    m_agents.append({"Boi", ":/image/boi.png", "Grounded", 400, 2, 100, 1});
+    m_agents.append({"Eloi", ":/image/eloi.png", "Grounded", 240, 2, 100, 2});
+    m_agents.append({"Kanar", ":/image/kanar.png", "Grounded", 160, 2, 100, 2});
+    m_agents.append({"Elsa", ":/image/elsa.png", "Grounded", 320, 2, 140, 2});
+    m_agents.append({"Karissa", ":/image/karissa.png", "Grounded", 280, 2, 80, 2});
+    m_agents.append({"Sir Philip", ":/image/sir_philip.png", "Grounded", 400, 2, 100, 1});
+    m_agents.append({"Frost", ":/image/frost.png", "Grounded", 260, 2, 80, 2});
+    m_agents.append({"Tusk", ":/image/tusk.png", "Grounded", 400, 2, 100, 1});
 
     // Flying agents
-    m_agents.append({"Rambu", ":/units/rambu.png", "Flying", 320, 3, 120, 1});
+    m_agents.append({"Rambu", ":/image/rambu.png", "Flying", 320, 3, 120, 1});
 
     // Floating agents
-    m_agents.append({"Sabrina", ":/units/sabrina.png", "Floating", 320, 3, 100, 1});
-    m_agents.append({"Death", ":/units/death.png", "Floating", 240, 3, 120, 2});
+    m_agents.append({"Sabrina", ":/image/sabrina.png", "Floating", 320, 3, 100, 1});
+    m_agents.append({"Death", ":/image/death.png", "Floating", 240, 3, 120, 2});
 }
 
 void gallery::createAgentCards()
 {
     QWidget *scrollContent = m_scrollArea->widget();
-    QVBoxLayout *scrollLayout = qobject_cast<QVBoxLayout*>(scrollContent->layout());
+    QVBoxLayout *scrollLayout = qobject_cast<QVBoxLayout *>(scrollContent->layout());
 
     // Create sections for each agent type
     QStringList agentTypes = {"WaterWalking", "Grounded", "Flying", "Floating"};
 
     for (const QString &type : agentTypes) {
         QLabel *typeLabel = new QLabel(type + " Agents", scrollContent);
-        typeLabel->setStyleSheet("font-size: 18px; color: #FFD700; font-weight: bold; margin-top: 10px;");
+        typeLabel->setStyleSheet(
+            "font-size: 18px; color: #FFD700; font-weight: bold; margin-top: 10px;");
         scrollLayout->addWidget(typeLabel);
 
         QFrame *separator = new QFrame(scrollContent);
@@ -158,21 +155,20 @@ void gallery::createAgentCards()
         const int maxColumns = 3;
 
         for (const AgentInfo &agent : m_agents) {
-            if (agent.type != type) continue;
+            if (agent.type != type)
+                continue;
 
             QFrame *agentCard = new QFrame(agentsContainer);
             agentCard->setFixedSize(200, 120);
-            agentCard->setStyleSheet(
-                "QFrame {"
-                "   background-color: rgba(70, 70, 70, 180);"
-                "   border-radius: 8px;"
-                "   border: 2px solid #555;"
-                "}"
-                "QFrame:hover {"
-                "   background-color: rgba(90, 90, 90, 200);"
-                "   border: 2px solid #777;"
-                "}"
-                );
+            agentCard->setStyleSheet("QFrame {"
+                                     "   background-color: rgba(70, 70, 70, 180);"
+                                     "   border-radius: 8px;"
+                                     "   border: 2px solid #555;"
+                                     "}"
+                                     "QFrame:hover {"
+                                     "   background-color: rgba(90, 90, 90, 200);"
+                                     "   border: 2px solid #777;"
+                                     "}");
 
             QHBoxLayout *cardLayout = new QHBoxLayout(agentCard);
             cardLayout->setContentsMargins(8, 8, 8, 8);
@@ -182,7 +178,8 @@ void gallery::createAgentCards()
             QLabel *imageLabel = new QLabel(agentCard);
             QPixmap pixmap(agent.imagePath);
             if (!pixmap.isNull()) {
-                imageLabel->setPixmap(pixmap.scaled(80, 80, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+                imageLabel->setPixmap(
+                    pixmap.scaled(80, 80, Qt::KeepAspectRatio, Qt::SmoothTransformation));
             }
             imageLabel->setAlignment(Qt::AlignCenter);
 
@@ -201,13 +198,15 @@ void gallery::createAgentCards()
             QLabel *hpLabel = new QLabel(QString(" HP: %1").arg(agent.hp), infoWidget);
             hpLabel->setStyleSheet("color: #FF5555; font-size: 10px;");
 
-            QLabel *mobilityLabel = new QLabel(QString("↗ Mobility: %1").arg(agent.mobility), infoWidget);
+            QLabel *mobilityLabel = new QLabel(QString("↗ Mobility: %1").arg(agent.mobility),
+                                               infoWidget);
             mobilityLabel->setStyleSheet("color: #55FF55; font-size: 10px;");
 
             QLabel *damageLabel = new QLabel(QString(" Damage: %1").arg(agent.damage), infoWidget);
             damageLabel->setStyleSheet("color: #FFAA55; font-size: 10px;");
 
-            QLabel *rangeLabel = new QLabel(QString(" Range: %1").arg(agent.attackRange), infoWidget);
+            QLabel *rangeLabel = new QLabel(QString(" Range: %1").arg(agent.attackRange),
+                                            infoWidget);
             rangeLabel->setStyleSheet("color: #AA55FF; font-size: 10px;");
 
             infoLayout->addWidget(nameLabel);
@@ -231,3 +230,4 @@ void gallery::createAgentCards()
         scrollLayout->addWidget(agentsContainer);
     }
 }
+
