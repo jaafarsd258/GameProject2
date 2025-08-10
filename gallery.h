@@ -1,14 +1,15 @@
 #ifndef GALLERY_H
 #define GALLERY_H
 
-#include <QMainWindow>
+#include <QGridLayout>
 #include <QLabel>
+#include <QMainWindow>
 #include <QPushButton>
 #include <QScrollArea>
-#include <QGridLayout>
 #include <QVector>
 
-struct AgentInfo {
+struct AgentInfo
+{
     QString name;
     QString imagePath;
     QString type;
@@ -18,22 +19,23 @@ struct AgentInfo {
     int attackRange;
 };
 
-class opening;  // Forward declaration
+class opening; 
 
 class gallery : public QMainWindow
 {
     Q_OBJECT
 public:
-    explicit gallery(opening* openingPage = nullptr, QWidget *parent = nullptr);
+    explicit gallery(opening *openingPage = nullptr, QWidget *parent = nullptr);
 
 private:
     void setupAgentsData();
     void createAgentCards();
 
     QLabel *backgroundLabel;
-    opening* m_openingPage;
+    opening *m_openingPage;
     QVector<AgentInfo> m_agents;
     QScrollArea *m_scrollArea;
+
 };
 
 #endif // GALLERY_H
