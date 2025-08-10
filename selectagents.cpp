@@ -25,11 +25,8 @@ SelectAgents::SelectAgents(const QString& player1Name,
     // Initialize selected agents sets
     m_selectedAgents[1] = QSet<QString>();
     m_selectedAgents[2] = QSet<QString>();
-
-    // Setup background image
     backgroundLabel = new QLabel(this);
     QPixmap bgImage(":/new/backmonsters5.jpg"); // Make sure this path is correct
-
     if (!bgImage.isNull()) {
         bgImage = bgImage.scaled(this->size(), Qt::KeepAspectRatioByExpanding);
         backgroundLabel->setPixmap(bgImage);
@@ -40,12 +37,8 @@ SelectAgents::SelectAgents(const QString& player1Name,
         qWarning() << "Background image not found!";
     }
     backgroundLabel->setGeometry(0, 0, width(), height());
-
-    // Load agents data and setup UI
     setupAgentsData();
     setupUI();
-
-    // Ensure background stays behind other widgets
     backgroundLabel->lower();
 }
 
@@ -104,7 +97,6 @@ void SelectAgents::setupUI() {
     player1Layout->addWidget(m_player1ConfirmButton);
     player1Layout->addStretch();
 
-    // Player 2 Layout: نام + Selected + Confirm
     QHBoxLayout* player2Layout = new QHBoxLayout();
     m_player2Label = new QLabel(m_player2Name, this);
     m_player2Label->setStyleSheet("font-weight: bold; font-size: 16px;");
@@ -117,7 +109,6 @@ void SelectAgents::setupUI() {
     player2Layout->addWidget(m_player2ConfirmButton);
     player2Layout->addStretch();
 
-    // اضافه کردن هر دو لایه بازیکن به لایه اصلی
     mainLayout->addLayout(player1Layout);
     mainLayout->addLayout(player2Layout);
 
@@ -154,7 +145,6 @@ void SelectAgents::setupUI() {
     // منطقه انتخاب ایجنت‌ها
     createAgentSelectionUI();
 
-    // اتصال سیگنال‌ها
     connect(m_startButton, &QPushButton::clicked, this, &SelectAgents::onStartGameClicked);
     connect(m_player1ConfirmButton, &QPushButton::clicked, this, &SelectAgents::onPlayer1ConfirmClicked);
     connect(m_player2ConfirmButton, &QPushButton::clicked, this, &SelectAgents::onPlayer2ConfirmClicked);
@@ -226,12 +216,10 @@ void SelectAgents::createAgentSelectionUI()
                 "}");
             agentCard->setCursor(Qt::PointingHandCursor);
 
-            // ساختار داخلی کارت
             QHBoxLayout* cardLayout = new QHBoxLayout(agentCard);
             cardLayout->setContentsMargins(8, 8, 8, 8);
             cardLayout->setSpacing(10);
 
-            // بخش تصویر ایجنت
             QLabel* imageLabel = new QLabel(agentCard);
             QPixmap pixmap(agent.imagePath);
             if (!pixmap.isNull()) {
@@ -239,7 +227,6 @@ void SelectAgents::createAgentSelectionUI()
             }
             imageLabel->setAlignment(Qt::AlignCenter);
 
-            // بخش اطلاعات ایجنت
             QWidget* infoWidget = new QWidget(agentCard);
             QVBoxLayout* infoLayout = new QVBoxLayout(infoWidget);
             infoLayout->setSpacing(3);
@@ -325,8 +312,6 @@ void SelectAgents::onAgentSelected(int player, const QString& agentName, Agent::
 
     m_selectedAgents[player].insert(agentName);
     updateSelectedAgentsDisplay();
-
-    // Update status message
     QString status = QString("Player %1 has selected %2/4 agents")
                          .arg(player)
                          .arg(m_selectedAgents[player].size());
